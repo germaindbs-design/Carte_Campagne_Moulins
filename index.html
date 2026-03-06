@@ -26,32 +26,35 @@ textarea{width:100%; font-size:14px;}
 <section class="panel-section" id="collab-section">
   <div class="panel-section-title">
     <button class="panel-toggle" data-toggle="collapse" data-target="#collab-body" aria-expanded="false" type="button">
-      <span>Mode partagé</span>
+      <span>Carte partagée</span>
       <span class="chev">▸</span>
     </button>
   </div>
   <div class="panel-section-body collapse" id="collab-body">
     <div class="help">
-      <div class="help-title">Mode partagé (internet)</div>
+      <div class="help-title">Version partagée</div>
       <div class="help-text">
-        La carte est déjà configurée. Clique simplement sur <b>Se connecter</b> pour charger et partager les modifications.
+        La carte se connecte automatiquement. En cas de souci, utilise les boutons ci-dessous.
       </div>
     </div>
 
-    <label class="small-label">Supabase URL</label>
-    <input id="sb-url" type="text" value="https://lheieshitjtswniekhvb.supabase.co" placeholder="https://xxxx.supabase.co" style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15)">
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="btn" id="sb-connect" type="button" style="flex:1 1 140px">Connexion</button>
+      <button class="btn" id="sb-disconnect" type="button" style="display:none; flex:1 1 140px">Déconnexion</button>
+    </div>
 
-    <label class="small-label">Supabase anon key</label>
-    <input id="sb-key" type="password" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoZWllc2hpdGp0c3duaWVraHZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MzI4MTAsImV4cCI6MjA4ODMwODgxMH0.OqcqdZhe4I_1UZ-GnBKoTZhdiJCfVVLpWEwUBAUIAw4" placeholder="eyJhbGciOi..." style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15)">
+    <details style="margin-top:8px">
+      <summary style="cursor:pointer; font-weight:700;">Paramètres techniques</summary>
+      <label class="small-label">Supabase URL</label>
+      <input id="sb-url" type="text" style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15)">
+      <label class="small-label">Supabase anon key</label>
+      <input id="sb-key" type="password" style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15)">
+      <label class="small-label">Salle partagée (room_id)</label>
+      <input id="sb-room" type="text" readonly style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15);background:#f7f7f7;opacity:0.9">
+      <div class="note" style="margin-top:6px">Cette salle est figée dans le fichier pour éviter les erreurs entre navigateurs.</div>
+    </details>
 
-    <label class="small-label">Salle partagée (room_id)</label>
-    <input id="sb-room" type="text" value="moulins-2026-porte-a-porte-7f3c9d8a2b" placeholder="moulins-porte-a-porte" readonly style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15);background:#f7f7f7;opacity:0.9">
-
-    <button class="btn" id="sb-connect" type="button">Se connecter</button>
-    <button class="btn" id="sb-disconnect" type="button" style="display:none">Se déconnecter</button>
-    <div class="note" style="margin-top:6px">Cette salle est figée dans le fichier pour éviter les erreurs entre navigateurs.</div>
-
-    <div class="note" id="sb-status" style="margin-top:8px">Connexion automatique…</div>
+    <div class="note" id="sb-status" style="margin-top:8px">Connexion…</div>
   </div>
 </section>
 
@@ -75,7 +78,7 @@ textarea{width:100%; font-size:14px;}
   </div>
 </section>
 
-<h2>Campagne Municipale – Moulins</h2>
+<h2>Campagne Municipale – Moulins <span id="syncBadge" style="display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;font-size:12px;background:#eee;color:#333;">hors ligne</span></h2>
 <div>
 <b>Quartiers</b>
 <ul id="quartierList"></ul>
@@ -100001,7 +100004,21 @@ wireCollapses();
   let lastSeenUpdatedAt = null;
 
   function el(id){ return document.getElementById(id); }
-  function setStatus(msg){ const s=el('sb-status'); if(s) s.textContent = msg; }
+  function setStatus(msg){
+    const s=el('sb-status'); if(s) s.textContent = msg;
+    const b=document.getElementById('syncBadge');
+    if(b){
+      b.textContent = (msg||"").toLowerCase().includes("en ligne") ? "en ligne" :
+                      (msg||"").toLowerCase().includes("synchronisé") ? "sync" :
+                      (msg||"").toLowerCase().includes("connexion") ? "connexion…" : "hors ligne";
+      b.style.background = (msg||"").toLowerCase().includes("en ligne") ? "#dff5e1" :
+                           (msg||"").toLowerCase().includes("synchronisé") ? "#e8f0ff" :
+                           (msg||"").toLowerCase().includes("connexion") ? "#fff3cd" : "#eee";
+      b.style.color = (msg||"").toLowerCase().includes("en ligne") ? "#1b5e20" :
+                      (msg||"").toLowerCase().includes("synchronisé") ? "#1e40af" :
+                      (msg||"").toLowerCase().includes("connexion") ? "#7a5d00" : "#333";
+    }
+  }
 
   function getStateForCloud(){
     try {
