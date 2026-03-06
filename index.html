@@ -46,15 +46,16 @@ textarea{width:100%; font-size:14px;}
     <details style="margin-top:8px">
       <summary style="cursor:pointer; font-weight:700;">Paramètres techniques</summary>
       <label class="small-label">Supabase URL</label>
-      <input id="sb-url" type="text" style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15)">
+      <input id="sb-url" type="text" value="https://lheieshitjtswniekhvb.supabase.co" style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15)">
       <label class="small-label">Supabase anon key</label>
-      <input id="sb-key" type="password" style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15)">
+      <input id="sb-key" type="password" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoZWllc2hpdGp0c3duaWVraHZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MzI4MTAsImV4cCI6MjA4ODMwODgxMH0.OqcqdZhe4I_1UZ-GnBKoTZhdiJCfVVLpWEwUBAUIAw4" style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15)">
       <label class="small-label">Salle partagée (room_id)</label>
-      <input id="sb-room" type="text" readonly style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15);background:#f7f7f7;opacity:0.9">
+      <input id="sb-room" type="text" readonly value="moulins-2026-porte-a-porte-7f3c9d8a2b" style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15);background:#f7f7f7;opacity:0.9">
       <div class="note" style="margin-top:6px">Cette salle est figée dans le fichier pour éviter les erreurs entre navigateurs.</div>
     </details>
 
-    <div class="note" id="sb-status" style="margin-top:8px">Connexion…</div>
+    <div class="note" id="sb-status" style="margin-top:8px">Hors ligne.</div>
+<button class="btn" id="sb-retry" type="button" style="margin-top:8px">Réessayer la connexion</button>
   </div>
 </section>
 
@@ -100254,6 +100255,7 @@ wireCollapses();
     }, 200);
     if(el('sb-connect')) el('sb-connect').onclick = ()=>connect().catch(err=>setStatus("Erreur: " + (err.message || err)));
     if(el('sb-disconnect')) el('sb-disconnect').onclick = ()=>disconnect();
+    if(el('sb-retry')) el('sb-retry').onclick = ()=>connect().catch(err=>setStatus('Erreur: ' + (err.message || err)));
   });
 })();
 </script>
