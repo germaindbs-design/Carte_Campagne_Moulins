@@ -44,11 +44,12 @@ textarea{width:100%; font-size:14px;}
     <label class="small-label">Supabase anon key</label>
     <input id="sb-key" type="password" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoZWllc2hpdGp0c3duaWVraHZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MzI4MTAsImV4cCI6MjA4ODMwODgxMH0.OqcqdZhe4I_1UZ-GnBKoTZhdiJCfVVLpWEwUBAUIAw4" placeholder="eyJhbGciOi..." style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15)">
 
-    <label class="small-label">Salle (room_id)</label>
-    <input id="sb-room" type="text" value="moulins-2026-porte-a-porte-7f3c9d8a2b" placeholder="moulins-porte-a-porte" style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15)">
+    <label class="small-label">Salle partagée (room_id)</label>
+    <input id="sb-room" type="text" value="moulins-2026-porte-a-porte-7f3c9d8a2b" placeholder="moulins-porte-a-porte" readonly style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15);background:#f7f7f7;opacity:0.9">
 
     <button class="btn" id="sb-connect" type="button">Se connecter</button>
     <button class="btn" id="sb-disconnect" type="button" style="display:none">Se déconnecter</button>
+    <div class="note" style="margin-top:6px">Cette salle est figée dans le fichier pour éviter les erreurs entre navigateurs.</div>
 
     <div class="note" id="sb-status" style="margin-top:8px">Connexion automatique…</div>
   </div>
@@ -100216,9 +100217,9 @@ wireCollapses();
   function prefill(){
     try {
       const url = localStorage.getItem("sb_url")||"";
-      const room = localStorage.getItem("sb_room")||"";
-      if(el('sb-url') && url) el('sb-url').value = url;
-      if(el('sb-room') && room) el('sb-room').value = room;
+      // IMPORTANT : on ne remplace PAS le room_id embarqué par une ancienne valeur locale,
+      // sinon deux navigateurs peuvent se connecter sur des salles différentes sans s'en rendre compte.
+      if(el('sb-url') && url && !el('sb-url').value) el('sb-url').value = url;
     } catch(e) {}
   }
 
