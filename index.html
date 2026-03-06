@@ -26,7 +26,7 @@ textarea{width:100%; font-size:14px;}
 <section class="panel-section" id="collab-section">
   <div class="panel-section-title">
     <button class="panel-toggle" data-toggle="collapse" data-target="#collab-body" aria-expanded="false" type="button">
-      <span>Collaboration en ligne</span>
+      <span>Mode partagé</span>
       <span class="chev">▸</span>
     </button>
   </div>
@@ -34,24 +34,23 @@ textarea{width:100%; font-size:14px;}
     <div class="help">
       <div class="help-title">Mode partagé (internet)</div>
       <div class="help-text">
-        Pour que tout le monde voie les mêmes notes/rues cochées, on synchronise via <b>Supabase</b>.
-        <br/>👉 Renseigne l’URL + la clé publique (anon) et un identifiant de salle.
+        La carte est déjà configurée. Clique simplement sur <b>Se connecter</b> pour charger et partager les modifications.
       </div>
     </div>
 
     <label class="small-label">Supabase URL</label>
-    <input id="sb-url" type="text" placeholder="https://xxxx.supabase.co" style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15)">
+    <input id="sb-url" type="text" value="https://lheieshitjtswniekhvb.supabase.co" placeholder="https://xxxx.supabase.co" style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15)">
 
     <label class="small-label">Supabase anon key</label>
-    <input id="sb-key" type="password" placeholder="eyJhbGciOi..." style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15)">
+    <input id="sb-key" type="password" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoZWllc2hpdGp0c3duaWVraHZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MzI4MTAsImV4cCI6MjA4ODMwODgxMH0.OqcqdZhe4I_1UZ-GnBKoTZhdiJCfVVLpWEwUBAUIAw4" placeholder="eyJhbGciOi..." style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15)">
 
     <label class="small-label">Salle (room_id)</label>
-    <input id="sb-room" type="text" placeholder="moulins-porte-a-porte" style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15)">
+    <input id="sb-room" type="text" value="moulins-2026-porte-a-porte-7f3c9d8a2b" placeholder="moulins-porte-a-porte" style="width:100%;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.15)">
 
     <button class="btn" id="sb-connect" type="button">Se connecter</button>
     <button class="btn" id="sb-disconnect" type="button" style="display:none">Se déconnecter</button>
 
-    <div class="note" id="sb-status" style="margin-top:8px">Hors ligne.</div>
+    <div class="note" id="sb-status" style="margin-top:8px">Connexion automatique…</div>
   </div>
 </section>
 
@@ -100225,6 +100224,16 @@ wireCollapses();
 
   window.addEventListener("load", ()=>{
     prefill();
+    setTimeout(()=>{
+      try{
+        const u = (el('sb-url')?.value || "").trim();
+        const k = (el('sb-key')?.value || "").trim();
+        const r = (el('sb-room')?.value || "").trim();
+        if(u && k && r){
+          connect().catch(err=>setStatus("Erreur: " + (err.message || err)));
+        }
+      }catch(e){}
+    }, 200);
     if(el('sb-connect')) el('sb-connect').onclick = ()=>connect().catch(err=>setStatus("Erreur: " + (err.message || err)));
     if(el('sb-disconnect')) el('sb-disconnect').onclick = ()=>disconnect();
   });
